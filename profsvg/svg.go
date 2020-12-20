@@ -1,31 +1,35 @@
 package profsvg
 
 import (
+	"fmt"
 	"html/template"
 	"io"
 	"math"
+	"net/url"
 )
 
-type profile struct {
-	UserName string `xml:"username"`
-	Country  string `xml:"country"`
-	Language string `xml:"language"`
-	Solved   int    `xml:"solved"`
-	Level    int    `xml:"level"`
-}
-
 // Write writes profile SVG to writer.
-func Write(writer io.Writer) error {
-	profile := profile{
-		UserName: "rkobayashi",
-		Country:  "Japan",
-		Language: "Haskell",
-		Solved:   2,
-		Level:    0,
+func Write(writer io.Writer, query url.Values) error {
+	name, err := parseUserNameFromQuery(query)
+	if err != nil {
+		return err
+	}
+
+	profile, err := getProfileFromServer(name)
+	if err != nil {
+		return err
 	}
 
 	t := newSVGTemplate()
 	return t.Execute(writer, profile)
+}
+
+func parseUserNameFromQuery(q url.Values) (string, error) {
+	if len(q["username"]) == 1 {
+		return q["username"][0], nil
+	}
+
+	return "", fmt.Errorf("cannot find username. query=%v", q)
 }
 
 func newSVGTemplate() *template.Template {
