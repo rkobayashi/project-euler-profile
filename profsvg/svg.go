@@ -83,3 +83,10 @@ const profileTemplate = `{{$rankRadius := 40}}
   />
   <circle cx="240" cy="70" r="{{$rankRadius}}" stroke="#ff9933" stroke-width="8" fill="none" opacity="0.2"/>
 </svg>`
+
+const errSVG = `<svg xmlns="http://www.w3.org/2000/svg"
+width="495" height="195" viewBox="0,0,495,195">
+<text x="10" y="20" font-weight="bold" fill="#6b4e3d">
+  Internal Server Error
+</text>
+</svg>`

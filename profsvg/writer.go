@@ -10,11 +10,13 @@ import (
 func Write(writer io.Writer, query url.Values) error {
 	name, err := parseUserNameFromQuery(query)
 	if err != nil {
+		fmt.Fprint(writer, errSVG)
 		return err
 	}
 
 	profile, err := getProfileFromServer(name)
 	if err != nil {
+		fmt.Fprint(writer, errSVG)
 		return err
 	}
 
