@@ -42,7 +42,7 @@ func levelPositionX(level int) int {
 
 const profileTemplate = `{{$rankRadius := 40}}
 <svg xmlns="http://www.w3.org/2000/svg"
-  width="495" height="195" viewBox="0,0,495,195">
+  width="350" height="150" viewBox="0,0,350,150">
 
   <style>
     .level-circle {
