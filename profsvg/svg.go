@@ -9,8 +9,9 @@ const projectEulerLevelMax = 28
 
 func newSVGTemplate() *template.Template {
 	funcs := template.FuncMap{
-		"circumference": circumference,
-		"arcByLevel":    arcByLevel,
+		"circumference":  circumference,
+		"arcByLevel":     arcByLevel,
+		"levelPositionX": levelPositionX,
 	}
 
 	return template.Must(template.New("svg").Funcs(funcs).Parse(profileTemplate))
@@ -29,6 +30,14 @@ func arcByLevel(radius, level int) float32 {
 	}
 
 	return (1 - float32(level+1)/(projectEulerLevelMax+1)) * circumference(radius)
+}
+
+func levelPositionX(level int) int {
+	if level < 10 {
+		return 230
+	}
+
+	return 220
 }
 
 const profileTemplate = `{{$rankRadius := 40}}
@@ -75,7 +84,7 @@ const profileTemplate = `{{$rankRadius := 40}}
     {{.Country}}
   </text>
 
-  <text x="230" y="80" font-weight="bold" font-size="30" fill="#ff9933">
+  <text x="{{levelPositionX .Level}}" y="80" font-weight="bold" font-size="30" fill="#ff9933">
     {{.Level}}
   </text>
   <circle cx="240" cy="70" r="{{$rankRadius}}" stroke="#ff9933" stroke-width="8" fill="none"
