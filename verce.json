@@ -6,11 +6,5 @@
             "src": "api/*.go",
             "use": "@vercel/go"
         }
-    ],
-    "redirects": [
-        {
-            "source": "/",
-            "destination": "https://github.com/rkobayashi/project-euler-profile"
-        }
     ]
 }

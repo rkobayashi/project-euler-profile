@@ -1,5 +1,9 @@
 name: ci
-on: [push, pull_request]
+on:
+  push:
+    branches:
+    - main
+  pull_request:
 
 jobs:
   test:
@@ -16,3 +20,5 @@ jobs:
       run: golint -set_exit_status=1 ./...
     - name: go vet
       run: go vet ./...
+    - name: go test
+      run: go test ./...

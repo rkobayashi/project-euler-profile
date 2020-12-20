@@ -2,35 +2,16 @@ package profsvg
 
 import (
 	"html/template"
-	"io"
 	"math"
 )
 
-type profile struct {
-	UserName string `xml:"username"`
-	Country  string `xml:"country"`
-	Language string `xml:"language"`
-	Solved   int    `xml:"solved"`
-	Level    int    `xml:"level"`
-}
-
-// Write writes profile SVG to writer.
-func Write(writer io.Writer) error {
-	profile := profile{
-		UserName: "rkobayashi",
-		Country:  "Japan",
-		Language: "Haskell",
-		Solved:   2,
-		Level:    0,
-	}
-
-	t := newSVGTemplate()
-	return t.Execute(writer, profile)
-}
+const projectEulerLevelMax = 28
 
 func newSVGTemplate() *template.Template {
 	funcs := template.FuncMap{
-		"circumference": circumference,
+		"circumference":  circumference,
+		"arcByLevel":     arcByLevel,
+		"levelPositionX": levelPositionX,
 	}
 
 	return template.Must(template.New("svg").Funcs(funcs).Parse(profileTemplate))
@@ -38,6 +19,25 @@ func newSVGTemplate() *template.Template {
 
 func circumference(radius int) float32 {
 	return 2.0 * math.Pi * float32(radius)
+}
+
+func arcByLevel(radius, level int) float32 {
+	if level < 0 {
+		return circumference(radius)
+	}
+	if level >= projectEulerLevelMax {
+		return 0.0
+	}
+
+	return (1 - float32(level+1)/(projectEulerLevelMax+1)) * circumference(radius)
+}
+
+func levelPositionX(level int) int {
+	if level < 10 {
+		return 230
+	}
+
+	return 220
 }
 
 const profileTemplate = `{{$rankRadius := 40}}
@@ -51,7 +51,7 @@ const profileTemplate = `{{$rankRadius := 40}}
 
     @keyframes levelCircle {
       to {
-        stroke-dashoffset: 243;
+        stroke-dashoffset: {{arcByLevel $rankRadius .Level}};
       }
       from {
         stroke-dashoffset: {{circumference $rankRadius}};
@@ -84,11 +84,18 @@ const profileTemplate = `{{$rankRadius := 40}}
     {{.Country}}
   </text>
 
-  <text x="230" y="80" font-weight="bold" font-size="30" fill="#ff9933">
+  <text x="{{levelPositionX .Level}}" y="80" font-weight="bold" font-size="30" fill="#ff9933">
     {{.Level}}
   </text>
   <circle cx="240" cy="70" r="{{$rankRadius}}" stroke="#ff9933" stroke-width="8" fill="none"
     stroke-dasharray="{{circumference $rankRadius}}" class="level-circle" transform="rotate(-90,240,70)"
   />
   <circle cx="240" cy="70" r="{{$rankRadius}}" stroke="#ff9933" stroke-width="8" fill="none" opacity="0.2"/>
+</svg>`
+
+const errSVG = `<svg xmlns="http://www.w3.org/2000/svg"
+width="495" height="195" viewBox="0,0,495,195">
+<text x="10" y="20" font-weight="bold" fill="#6b4e3d">
+  Internal Server Error
+</text>
 </svg>`
