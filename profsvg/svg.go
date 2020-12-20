@@ -59,6 +59,8 @@ const profileTemplate = `{{$rankRadius := 40}}
     }
   </style>
 
+  <rect width="100%" height="100%" fill="white" />
+
   <text x="10" y="20" font-weight="bold" fill="#6b4e3d">
     {{.UserName}}'s Project Euler Profile
   </text>
