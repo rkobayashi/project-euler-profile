@@ -5,9 +5,12 @@ import (
 	"math"
 )
 
+const projectEulerLevelMax = 28
+
 func newSVGTemplate() *template.Template {
 	funcs := template.FuncMap{
 		"circumference": circumference,
+		"arcByLevel":    arcByLevel,
 	}
 
 	return template.Must(template.New("svg").Funcs(funcs).Parse(profileTemplate))
@@ -15,6 +18,17 @@ func newSVGTemplate() *template.Template {
 
 func circumference(radius int) float32 {
 	return 2.0 * math.Pi * float32(radius)
+}
+
+func arcByLevel(radius, level int) float32 {
+	if level < 0 {
+		return circumference(radius)
+	}
+	if level >= projectEulerLevelMax {
+		return 0.0
+	}
+
+	return (1 - float32(level+1)/(projectEulerLevelMax+1)) * circumference(radius)
 }
 
 const profileTemplate = `{{$rankRadius := 40}}
@@ -28,7 +42,7 @@ const profileTemplate = `{{$rankRadius := 40}}
 
     @keyframes levelCircle {
       to {
-        stroke-dashoffset: 243;
+        stroke-dashoffset: {{arcByLevel $rankRadius .Level}};
       }
       from {
         stroke-dashoffset: {{circumference $rankRadius}};
